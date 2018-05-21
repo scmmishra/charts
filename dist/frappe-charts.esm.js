@@ -235,7 +235,7 @@ class SvgTip {
 		this.dataPointList.innerHTML = '';
 
 		this.listValues.map((set, i) => {
-			const color = this.colors[i] || 'black';
+			const color = Array.isArray(this.colors[i]) ? this.colors[i][this.index] : (this.colors[i] || 'black');
 			let value = set.formatted === 0 || set.formatted ? set.formatted : set.value;
 
 			let li = $.create('li', {
@@ -298,10 +298,6 @@ class SvgTip {
 	}
 }
 
-/**
- * Returns the value of a number upto 2 decimal places.
- * @param {Number} d Any number
- */
 function floatTwo(d) {
 	return parseFloat(d.toFixed(2));
 }
@@ -1401,15 +1397,20 @@ class BaseChart {
 
 	validateColors(colors, type) {
 		const validColors = [];
-		colors = (colors || []).concat(DEFAULT_COLORS[type]);
-		colors.forEach((string) => {
-			const color = getColor(string);
-			if(!isValidColor(color)) {
-				console.warn('"' + string + '" is not a valid color.');
+		colors = colors || [];
+		colors.forEach((entry) => {
+			if (Array.isArray(entry)) {
+				validColors.push(this.validateColors(entry, type));
+				return;
+			}
+			const color = getColor(entry);
+			if (!isValidColor(color)) {
+				console.warn('"' + entry + '" is not a valid color.');
 			} else {
 				validColors.push(color);
 			}
 		});
+		validColors.concat(DEFAULT_COLORS[type]);
 		return validColors;
 	}
 
@@ -1564,6 +1565,7 @@ class BaseChart {
 			console.error('No data to update.');
 		}
 		this.data = this.prepareData(data);
+		this.data.datasets.forEach((d, i) => { if(d.colors) { this.colors[i] = d.colors;}});
 		this.calc(); // builds state
 		this.render();
 	}
@@ -2097,7 +2099,7 @@ let componentConfigs = {
 					data.xPositions[j],
 					y,
 					data.barWidth,
-					c.color,
+					data.colors ? ((j < data.colors.length) ? data.colors[j] : data.colors[0]) : Array.isArray(c.color) ? (j < c.color.length ? c.color[j] : c.color[0]) : c.color,
 					data.labels[j],
 					j,
 					data.offsets[j],
@@ -2131,6 +2133,7 @@ let componentConfigs = {
 				yPositions: oldYPos,
 				offsets: oldOffsets,
 				labels: newLabels,
+				colors: newData.colors,
 
 				zeroLine: this.oldData.zeroLine,
 				barsWidth: this.oldData.barsWidth,
@@ -3209,6 +3212,7 @@ class AxisChart extends BaseChart {
 
 				values: values,
 				yPositions: scaleAll(values),
+				colors: d.colors,
 
 				cumulativeYs: cumulativeYs,
 				cumulativeYPos: scaleAll(cumulativeYs),
@@ -3330,7 +3334,7 @@ class AxisChart extends BaseChart {
 				'barGraph' + '-' + d.index,
 				{
 					index: index,
-					color: this.colors[index],
+					color: d.colors || this.colors[index],
 					stacked: this.barOptions.stacked,
 
 					// same for all datasets
@@ -3368,6 +3372,7 @@ class AxisChart extends BaseChart {
 					return {
 						xPositions: xPositions,
 						yPositions: d.yPositions,
+						colors: d.colors || undefined,
 						offsets: offsets,
 						// values: d.values,
 						labels: labels,
@@ -3455,11 +3460,12 @@ class AxisChart extends BaseChart {
 		titles.map((label, index) => {
 			let values = this.state.datasets.map((set, i) => {
 				let value = set.values[index];
+				let componentColor = set.hasOwnProperty('colors') ? set.colors : this.colors[i];
 				return {
 					title: set.name,
 					value: value,
 					yPos: set.yPositions[index],
-					color: this.colors[i],
+					color: Array.isArray(componentColor) ? (i < componentColor.length ? componentColor[i] : componentColor[0]) : componentColor,
 					formatted: formatY ? formatY(value) : value,
 				};
 			});
@@ -3677,7 +3683,6 @@ class AxisChart extends BaseChart {
 	// removeDataPoint(index = 0) {}
 }
 
-// import MultiAxisChart from './charts/MultiAxisChart';
 const chartTypes = {
 	bar: AxisChart,
 	line: AxisChart,
