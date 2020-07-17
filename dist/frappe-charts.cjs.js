@@ -1,3 +1,7 @@
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
 function _typeof(obj) {
   "@babel/helpers - typeof";
 
@@ -3024,15 +3028,9 @@ function getChartRangeIntervals(max) {
       range = upperBound - lowerBound;
     }
 
-		if(maxValue >= absMinValue) {
-			exponent = normalize(maxValue)[1];
-			intervals = getPositiveFirstIntervals(maxValue, absMinValue);
-		} else {
-			// Mirror: maxValue => absMinValue, then change sign
-			exponent = normalize(absMinValue)[1];
-			let posIntervals = getPositiveFirstIntervals(absMinValue, maxValue);
-			intervals = posIntervals.reverse().map(d => d * (-1));
-		}
+    noOfParts = range / 2;
+    partSize = 2;
+  } // Special case: 1 and 2
 
 
   if (range <= 2) {
@@ -4454,4 +4452,8 @@ var Chart = function Chart(parent, options) {
   return getChartByType(options.type, parent, options);
 };
 
-export { AxisChart, Chart, Heatmap, PercentageChart, PieChart };
+exports.AxisChart = AxisChart;
+exports.Chart = Chart;
+exports.Heatmap = Heatmap;
+exports.PercentageChart = PercentageChart;
+exports.PieChart = PieChart;
