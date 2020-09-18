@@ -38,6 +38,7 @@ export default class AxisChart extends BaseChart {
 		this.config.xAxisMode = options.axisOptions.xAxisMode || 'span';
 		this.config.yAxisMode = options.axisOptions.yAxisMode || 'span';
 		this.config.xIsSeries = options.axisOptions.xIsSeries || 0;
+		this.config.shortenYAxisNumbers = options.axisOptions.shortenYAxisNumbers || 0;
 
 		this.config.formatTooltipX = options.tooltipOptions.formatTooltipX;
 		this.config.formatTooltipY = options.tooltipOptions.formatTooltipY;
@@ -193,6 +194,7 @@ export default class AxisChart extends BaseChart {
 				{
 					mode: this.config.yAxisMode,
 					width: this.width,
+					shortenNumbers: this.config.shortenYAxisNumbers
 					// pos: 'right'
 				},
 				function() {
@@ -298,6 +300,7 @@ export default class AxisChart extends BaseChart {
 					svgDefs: this.svgDefs,
 					heatline: this.lineOptions.heatline,
 					regionFill: this.lineOptions.regionFill,
+					spline: this.lineOptions.spline,
 					hideDots: this.lineOptions.hideDots,
 					hideLine: this.lineOptions.hideLine,
 
@@ -405,17 +408,19 @@ export default class AxisChart extends BaseChart {
 		if(!s.yExtremes) return;
 
 		let index = getClosestInArray(relX, s.xAxis.positions, true);
-		let dbi = this.dataByIndex[index];
+		if (index >= 0) {
+			let dbi = this.dataByIndex[index];
 
-		this.tip.setValues(
-			dbi.xPos + this.tip.offset.x,
-			dbi.yExtreme + this.tip.offset.y,
-			{name: dbi.formattedLabel, value: ''},
-			dbi.values,
-			index
-		);
+			this.tip.setValues(
+				dbi.xPos + this.tip.offset.x,
+				dbi.yExtreme + this.tip.offset.y,
+				{name: dbi.formattedLabel, value: ''},
+				dbi.values,
+				index
+			);
 
-		this.tip.showTip();
+			this.tip.showTip();
+		}
 	}
 
 	renderLegend() {
@@ -432,7 +437,8 @@ export default class AxisChart extends BaseChart {
 					'0',
 					barWidth,
 					this.colors[i],
-					d.name);
+					d.name,
+					this.config.truncateLegends);
 				this.legendArea.appendChild(rect);
 			});
 		}

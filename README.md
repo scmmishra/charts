@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="https://github.com/frappe/design/blob/master/logos/charts-logo.svg" height="128">
+    <img src="https://github.com/frappe/design/blob/master/logos/logo-2019/frappe-charts-logo.png" height="128">
     <a href="https://frappe.github.io/charts">
         <h2>Frappe Charts</h2>
     </a>
@@ -21,9 +21,6 @@
     <a href="http://github.com/frappe/charts/tree/master/dist/js/frappe-charts.min.iife.js">
         <img src="http://img.badgesize.io/frappe/charts/master/dist/frappe-charts.min.iife.js.svg?compression=gzip">
     </a>
-    <a href="https://travis-ci.org/frappe/charts">
-        <img src="https://img.shields.io/travis/frappe/charts.svg?style=flat-square">
-    </a>
 </p>
 
 <p align="center">
@@ -35,19 +32,27 @@
 ### Contents
 * [Installation](#installation)
 * [Usage](#usage)
+* [Contribute](https://frappe.io/charts/docs/contributing)
 * [Updates](#updates)
 * [License](#license)
 
 #### Installation
 * Install via [`npm`](https://www.npmjs.com/get-npm):
 
-  ```console
+  ```sh
   $ npm install frappe-charts
   ```
 
   and include in your project:
   ```js
   import { Chart } from "frappe-charts"
+  ```
+
+  ...or include following for es-modules(eg:vuejs):
+  ```js
+  import { Chart } from 'frappe-charts/dist/frappe-charts.esm.js'
+  // import css
+  import 'frappe-charts/dist/frappe-charts.min.css'
   ```
 
 * ...or include within your HTML
@@ -85,6 +90,20 @@ const chart = new frappe.Chart("#chart", {  // or a DOM element,
     colors: ['#7cd6fd', '#743ee2']
 })
 ```
+
+...or for es-modules (replace `new frappe.Chart()` with `new Chart()`):
+```diff
+- const chart = new frappe.Chart("#chart", {
++ const chart = new Chart("#chart", {  // or a DOM element,
+                                    // new Chart() in case of ES6 module with above usage
+    title: "My Awesome Chart",
+    data: data,
+    type: 'axis-mixed', // or 'bar', 'line', 'scatter', 'pie', 'percentage'
+    height: 250,
+    colors: ['#7cd6fd', '#743ee2']
+})
+```
+
 
 If you want to contribute:
 
