@@ -1,7 +1,5 @@
 import BaseChart from './BaseChart';
-import { truncateString } from '../utils/draw-utils';
 import { legendDot } from '../utils/draw';
-import { getExtraWidth } from '../utils/constants';
 
 export default class AggregationChart extends BaseChart {
 	constructor(parent, args) {
