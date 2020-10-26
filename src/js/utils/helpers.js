@@ -98,10 +98,20 @@ export function getPositionByAngle(angle, radius) {
  * @param {object} candidate Candidate to test
  * @param {Boolean} nonNegative flag to treat negative number as invalid
  */
-export function isValidNumber(candidate, nonNegative=false) {
+export function isValidNumber(candidate, nonNegative = false) {
 	if (Number.isNaN(candidate)) return false;
 	else if (candidate === undefined) return false;
 	else if (!Number.isFinite(candidate)) return false;
 	else if (nonNegative && candidate < 0) return false;
 	else return true;
+}
+
+/**
+ * Round a number to the closes precision, max max precision 4
+ * @param {Number} d Any Number
+ */
+export function round(d) {
+	// https://floating-point-gui.de/
+	// https://www.jacklmoore.com/notes/rounding-in-javascript/
+	return Number(Math.round(d + 'e4') + 'e-4');
 }
